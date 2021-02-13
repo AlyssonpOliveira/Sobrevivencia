@@ -1,0 +1,132 @@
+import pygame
+
+Personagem = pygame.image.load('data/PersonagemPrincipal1.png')
+faca = pygame.image.load('data/Faca1.png')
+fundo = pygame.image.load('data/fundo.jpg')
+
+larguratela = 600
+alturatela = 600
+cordotexto = (000, 000, 139)
+fps = 50
+tamMinimo = 10
+tamMaximo = 25
+velMinima = 1
+velMaxima = 8
+inte = 6
+velPersonagem = 4
+velFaca = (0, -10)
+
+tamPersonagem = pygame.transform.scale(Personagem, [50,50])
+tamFaca = pygame.transform.scale(faca, [5,5])
+
+def moverPersonagem(Personagem, teclas, dim_tela):
+    borda_esquerda = 0
+    borda_superior = 0
+    borda_direita = dim_tela[0]
+    borda_inferior = dim_tela[1]
+    if teclas['esquerda'] and Personagem['objRect'].left > borda_esquerda:
+        Personagem['objRect'].x -= Personagem['vel']
+    if teclas['direita'] and Personagem['objRect'].left > borda_direita:
+        Personagem['objRect'].x += Personagem['vel']
+    if teclas['cima'] and Personagem['objRect'].left > borda_superior:
+        Personagem['objRect'].y -= Personagem['vel']
+    if teclas['baixo'] and Personagem['objRect'].left > borda_inferior:
+        Personagem['objRect'].y += Personagem['vel']
+
+def moverobjeto(objeto):
+    objeto['objRect'].x += objeto['vel'][0]
+    objeto['objRect'].y += objeto['vel'][1]
+
+def fim():
+
+    pygame.quit()
+    exit()
+
+def aguardarcomando():
+
+    while True:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                fim()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_ESCAPE:
+                    fim()
+                return
+
+def introduzirtexto(texto, fonte, tela, x, y):
+    objTexto = fonte.render(texto, True, cordotexto)
+    rectTexto = objTexto.get_rect()
+    rectTexto.topleft =(x, y)
+    tela.blit(objTexto,rectTexto)
+
+pygame.init()
+relogio = pygame.time.Clock()
+tela = pygame.display.set_mode((larguratela, alturatela))
+pygame.display.set_caption('Sobreviva')
+
+pygame.mouse.set_visible(False)
+fundoredimensionar = pygame.transform.scale(fundo, (alturatela, larguratela))
+
+fonte = pygame.font.Font(None, 44)
+
+'''Ainda Irei Colocar Algum Som'''
+
+introduzirtexto('Sobreviva', fonte, tela, larguratela/5, alturatela/5)
+introduzirtexto('PRESSIONE ALGUMA TECLA PARA COMEÇAR!', fonte, tela, larguratela/18, alturatela/2)
+pygame.display.update()
+aguardarcomando()
+
+recorde = 0
+while True:
+
+    facas = []
+    pontuacao = []
+    loop = True
+    teclas = {}
+    teclas['esquerda'] = teclas['direita'] = teclas['cima'] = teclas['baixo'] = False
+    contador = 0
+
+    posX = larguratela/2
+    posY = alturatela -50
+    Personagem = {'objRect': pygame.Rect(posX, posY, 50, 50),'Imagem':Personagem, 'vel':velPersonagem}
+
+
+    introduzirtexto(' GAME OVER ', fonte, tela, (larguratela/3),(alturatela/3))
+    introduzirtexto(' Pressione Qualquer Tecla Para Iniciar: ', fonte, tela,  (larguratela/10), (alturatela/2))
+    pygame.display.update()
+
+    aguardarcomando()
+
+    while loop:
+        pontuacao += 1
+        if pontuacao == recorde:
+            print('parabéns')
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                fim()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_ESCAPE:
+                    fim()
+                if evento.key == pygame.K_LEFT or evento.key == pygame.K_a:
+                    teclas['esquerda'] = True
+                if evento.key == pygame.K_RIGHT or evento.key == pygame.K_d:
+                    teclas['direita'] = True
+                if evento.key == pygame.K_UP or evento.key == pygame.K_w:
+                    teclas['cima'] = True
+                if evento.key == pygame.K_DOWN or evento.key == pygame.K_s:
+                    teclas['baixo'] = True
+                if evento == pygame.K_SPACE:
+                    faca = {'objRect': pygame.Rect(Personagem['objRect'].centerx, Personagem['objRect'].top, larguratela, alturatela),
+            'imagem': faca, 'vel': velFaca}
+                    facas.append(faca)
+
+            if evento.type == pygame.KEYUP:
+                if evento.Key == pygame.K_LEFT or evento.key == pygame.K_a:
+                    teclas['esquerda'] = False
+                if evento.Key == pygame.K_RIGHT or evento.key == pygame.K_d:
+                    teclas['direita'] = False
+                if evento.Key == pygame.K_UP or evento.key == pygame.K_w:
+                    teclas['cima'] = False
+                if evento.Key == pygame.K_DOWN or evento.key == pygame.K_s:
+                    teclas['baixo'] = False
